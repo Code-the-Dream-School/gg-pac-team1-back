@@ -1,16 +1,16 @@
 const express = require("express");
 const router = express.Router();
-const flightController = require("../controllers/flightController");
+const flightController = require("../controllers/flightsController");
 
 router
   .route("/")
-  .post(flightController.createFlight)
-  .get(flightController.getAllFlights);
+  .post(flightsController.createFlight)
+  .get(flightsController.getAllFlights);
 
 router
   .route("/:id")
-  .get(flightController.getFlight)
-  .patch(flightController.updateFlight)
-  .delete(flightController.deleteFlight);
+  .get(flightsController.getFlight)
+  .patch(flightsController.updateFlight)
+  .delete(flightsController.deleteFlight);
 
 module.exports = router;
