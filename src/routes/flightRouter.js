@@ -4,13 +4,13 @@ const flightController = require("../controllers/flightsController");
 
 router
   .route("/")
-  .post(flightsController.createFlight)
-  .get(flightsController.getAllFlights);
+  .post(flightController.createFlight)
+  .get(flightController.getAllFlights);
 
 router
   .route("/:id")
-  .get(flightsController.getFlight)
-  .patch(flightsController.updateFlight)
-  .delete(flightsController.deleteFlight);
+  .get(flightController.getFlight)
+  .patch(flightController.updateFlight)
+  .delete(flightController.deleteFlight);
 
 module.exports = router;
