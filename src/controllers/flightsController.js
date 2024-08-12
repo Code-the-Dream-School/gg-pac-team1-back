@@ -1,6 +1,6 @@
-const Flight = require("../models/flight");
+const Flight = require("../models/flights");
 const { StatusCodes } = require("http-status-codes");
-const { BadRequestError, NotFoundError } = require("../errors");
+const { BadRequestError, NotFoundError } = require("../errors/errors");
 
 const createFlight = async (req, res) => {
   try {
@@ -58,6 +58,10 @@ const deleteFlight = async (req, res) => {
     throw new BadRequestError(error.message);
   }
 };
+/*test for the router is working*/
+const test2 = async (req, res) => {
+  res.send("IT IS A TEST....Auth route is working!");
+};
 
 module.exports = {
   createFlight,
@@ -65,4 +69,5 @@ module.exports = {
   getFlight,
   updateFlight,
   deleteFlight,
+  test2,
 };
