@@ -1,5 +1,6 @@
 const express = require("express");
 const router = express.Router();
+
 const {
   getAllFlights,
   getFlight,
@@ -8,6 +9,8 @@ const {
   deleteFlight,
   test2,
 } = require("../controllers/flightsController");
+
+
 
 router.get("/", test2);
 
