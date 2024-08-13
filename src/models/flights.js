@@ -1,4 +1,4 @@
-const { string } = require("joi");
+const { string } = require("joi"); //used for data validation
 const mongoose = require("mongoose");
 
 const flightSchema = new mongoose.Schema({

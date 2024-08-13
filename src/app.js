@@ -17,7 +17,7 @@ app.use(express.static("public"));
 app.use(favicon(__dirname + "/public/favicon.ico"));
 
 // routes
-app.use("/api/v1", mainRouter);
+app.use("/api/v1", mainRouter); //http://localhost:8000/api/v1/ browser
 app.use("/api/v1/auth", authRouter);
 app.use("/api/v1/flights", flightRouter);
 
