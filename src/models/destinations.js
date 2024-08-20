@@ -5,20 +5,40 @@ const destinationSchema = new mongoose.Schema({
   city: {
     type: String,
     required: [true, "please provide your city of destination"],
-    maxLength: 100,
+    maxLength: 200,
   },
   country: {
     type: String,
     required: [true, "please provide your country destination "],
     maxLength: 200,
   },
-  atractionNames: {
-    type: string,
-    require: [true, "please provide name of the atraction"],
+  attractionNames: {
+    type: [String],
+    required: [true, "Please provide names of the attractions"],
   },
-  bookingDates: {
-    type: Date,
-    required: [true, "select dates"],
+  bookingDates: [
+    {
+      start: {
+        type: Date,
+        required: true,
+      },
+      end: {
+        type: Date,
+        required: true,
+      },
+    },
+  ],
+  categories: {
+    type: [String],
+    enum: [
+      "family-friendly",
+      "wellness",
+      "budget-travel",
+      "trending",
+      "romantic",
+      "foodie",
+    ],
+    required: true,
   },
 
   createdBy: {
@@ -28,4 +48,4 @@ const destinationSchema = new mongoose.Schema({
   },
 });
 
-module.exports = mongoose.model("Destinations", destinationSchema);
+module.exports = mongoose.model("Destination", destinationSchema);

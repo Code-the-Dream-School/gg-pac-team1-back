@@ -1,43 +1,45 @@
-// Class for all custum errors
+const { StatusCodes } = require("http-status-codes");
+
+// Class for all custom errors
 class CustomAPIError extends Error {
   constructor(message) {
     super(message);
-    this.statusCode = 500; // generals erors
+    this.statusCode = StatusCodes.INTERNAL_SERVER_ERROR; // General errors, default to 500
   }
 }
 
 class NotFoundError extends CustomAPIError {
   constructor(message) {
     super(message);
-    this.statusCode = 404; //  not found
+    this.statusCode = StatusCodes.NOT_FOUND; // Resource not found, 404
   }
 }
 
 class BadRequestError extends CustomAPIError {
   constructor(message) {
     super(message);
-    this.statusCode = 400; //invalid request
+    this.statusCode = StatusCodes.BAD_REQUEST; // Invalid request, 400
   }
 }
 
 class UnauthorizedError extends CustomAPIError {
   constructor(message) {
     super(message);
-    this.statusCode = 401; // unauthorized requests
+    this.statusCode = StatusCodes.UNAUTHORIZED; // Unauthorized access, 401
   }
 }
 
 class UnauthenticatedError extends CustomAPIError {
   constructor(message) {
     super(message);
-    this.statusCode = StatusCodes.UNAUTHORIZED;
+    this.statusCode = StatusCodes.UNAUTHORIZED; // User not authenticated, 401
   }
 }
 
 class ConflictError extends CustomAPIError {
   constructor(message) {
     super(message);
-    this.statusCode = 409; // data conflicts
+    this.statusCode = StatusCodes.CONFLICT; // Data conflicts, 409
   }
 }
 

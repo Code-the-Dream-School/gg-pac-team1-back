@@ -3,31 +3,65 @@ const { StatusCodes } = require("http-status-codes"); //These codes are used to 
 const {
   BadRequestError,
   UnauthenticatedError,
+  ConflictError,
 } = require("../errors/errors.js");
 const bcrypt = require("bcryptjs"); // npm install bcryptjs ---->>>Used for secure password management.--->>comparePassword
 
 const register = async (req, res) => {
-  const user = await User.create({ ...req.body });
-  const token = user.createJWT();
-  res.status(StatusCodes.CREATED).json({ user: { name: user.name }, token });
+  try {
+    //Check if the email already exists
+    const existingUser = await User.findOne({ email: req.body.email });
+    if (existingUser) {
+      throw new ConflictError("Email already in use");
+    }
+    const user = await User.create({ ...req.body }); //created user
+    const token = user.createJWT(); //created token
+    res.status(StatusCodes.CREATED).json({ user: { name: user.name }, token });
+  } catch (error) {
+    if (error.code && error.code === 11000) {
+      //Handle duplicate key errors
+      return res
+        .status(StatusCodes.CONFLICT)
+        .json({ message: "Duplicate key error: Email already in use" });
+    }
+    console.error("Error during registration:", error);
+    res
+      .status(error.statusCode || StatusCodes.INTERNAL_SERVER_ERROR)
+      .json({ message: error.message });
+  }
+  //res.send("register user");
 };
 const login = async (req, res) => {
-  const { email, password } = req.body;
-  if (!email || !password) {
-    throw new BadRequestError("please insert email and password");
-  }
+  try {
+    const { email, password } = req.body;
+    if (!email || !password) {
+      throw new BadRequestError("please insert email and password");
+    }
 
-  const user = await User.findOne({ email });
-  if (!user) {
-    throw new UnauthenticatedError("invalid Credentials");
-  }
+    const user = await User.findOne({ email });
+    if (!user) {
+      throw new UnauthenticatedError("invalid Credentials");
+    }
 
-  const isPasswordCorrect = await user.comparePassword(password);
-  if (!isPasswordCorrect) {
-    throw new UnauthenticatedError("invalid Credentials");
+    const isPasswordCorrect = await user.comparePassword(password);
+    if (!isPasswordCorrect) {
+      throw new UnauthenticatedError("invalid Credentials");
+    }
+    const token = user.createJWT();
+    res.status(StatusCodes.OK).json({ user: { name: user.name }, token });
+  } catch (error) {
+    // Manejar errores y enviar una respuesta JSON adecuada
+    if (
+      error instanceof BadRequestError ||
+      error instanceof UnauthenticatedError
+    ) {
+      res.status(error.statusCode).json({ message: error.message });
+    } else {
+      res
+        .status(StatusCodes.INTERNAL_SERVER_ERROR)
+        .json({ message: "An unexpected error occurred" });
+    }
   }
-  const token = user.createJWT();
-  res.status(StatusCodes.OK).json({ user: { name: user.name }, token });
 };
 
 /*test for the router is working*/
