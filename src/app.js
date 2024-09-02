@@ -8,6 +8,7 @@ const mainRouter = require("./routes/mainRouter.js");
 const flightRouter = require("./routes/flightRouter.js");
 const authRouter = require("./routes/auth.js");
 const destinationRouter = require("./routes/destinationRouter.js");
+const reviewRouter = require("./routes/ReviewRouter.js");
 const errorHandlerMiddleware = require("./middleware/error-handler.js");
 
 // middleware
@@ -25,6 +26,7 @@ app.use("/api/v1", mainRouter); //http://localhost:8000/api/v1/ browser
 app.use("/api/v1/auth", authRouter);
 app.use("/api/v1/flights", AuthenticateUser, flightRouter);
 app.use("/api/v1/destinations", AuthenticateUser, destinationRouter);
+app.use("/api/v1/reviews", AuthenticateUser, reviewRouter);
 
 app.use(errorHandlerMiddleware);
 
