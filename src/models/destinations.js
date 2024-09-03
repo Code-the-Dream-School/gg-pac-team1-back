@@ -1,6 +1,18 @@
 const { string } = require("joi");
 const mongoose = require("mongoose");
 
+const attractionSchema = new mongoose.Schema({
+  name: {
+    type: String,
+    required: [true, "Attraction name is required"],
+  },
+  type: {
+    type: String,
+    enum: ["general", "restaurant", "museum", "park", "hotel"],
+    default: "general",
+  },
+});
+
 const destinationSchema = new mongoose.Schema({
   city: {
     type: String,
@@ -12,10 +24,7 @@ const destinationSchema = new mongoose.Schema({
     required: [true, "please provide your country destination "],
     maxLength: 200,
   },
-  attractionNames: {
-    type: [String],
-    required: [true, "Please provide names of the attractions"],
-  },
+  attractions: [attractionSchema],
   bookingDates: [
     {
       start: {
@@ -46,6 +55,12 @@ const destinationSchema = new mongoose.Schema({
     ref: "User",
     required: [true, "Please provide a user"],
   },
+  reviews: [
+    {
+      type: mongoose.Types.ObjectId,
+      ref: "Review", // Name of the  model Review
+    },
+  ],
 });
 
 module.exports = mongoose.model("Destination", destinationSchema);
