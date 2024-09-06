@@ -14,6 +14,9 @@ const hotelRouter = require('./routes/hotels.js')
 const roomRouter = require('./routes/room.js')
 const bookingRouter = require('./routes/booking.js')
 const errorHandlerMiddleware = require("./middleware/error-handler.js");
+const AuthenticateUser = require("./middleware/authentication.js");
+const creditCardRouter = require("./routes/creditCardRoutes.js");
+const paymentsRouter = require("./routes/paymentRoutes.js");
 
 // middleware
 app.use(cors());
@@ -22,7 +25,7 @@ app.use(express.urlencoded({ extended: false }));
 app.use(logger("dev"));
 app.use(express.static("public"));
 app.use(favicon(__dirname + "/public/favicon.ico"));
-const AuthenticateUser = require("./middleware/authentication.js");
+
 const { required } = require("joi");
 
 // routes
@@ -34,6 +37,9 @@ app.use("/api/v1/reviews", AuthenticateUser, reviewRouter);
 app.use('/api/v1/hotels', AuthenticateUser, hotelRouter)
 app.use('/api/v1/rooms', AuthenticateUser, roomRouter)
 app.use('/api/v1/booking', AuthenticateUser, bookingRouter)
+app.use("/api/v1/credit-cards", AuthenticateUser, creditCardRouter);
+app.use("/api/v1/payments", AuthenticateUser, paymentsRouter);
+
 
 app.use(errorHandlerMiddleware);
 
