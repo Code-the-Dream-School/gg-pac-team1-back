@@ -79,7 +79,14 @@ const getSingleRoomByHotelId = async (req, res) => {
 }
 
 
+// gets all rooms without hotelId
+const getRooms = async (req, res) => {
+    const rooms = await Room.find().sort('-createdAt')
+    res.status(StatusCodes.OK).json({rooms})
+}
 
+
+// delete room by roomId
 const deleteRoom = async (req, res) => {
     const {user: {userId}, 
         params: {id: roomId}} = req
@@ -91,4 +98,4 @@ const deleteRoom = async (req, res) => {
     res.status(StatusCodes.OK).send("hotel deleted")
 }  
 
-module.exports = {createRoom, getAllRooms, getSingleRoomByHotelId, deleteRoom}
+module.exports = {createRoom, getAllRooms, getSingleRoomByHotelId, deleteRoom, getRooms}
