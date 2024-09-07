@@ -40,6 +40,7 @@ app.use('/api/v1/booking', AuthenticateUser, bookingRouter)
 app.use("/api/v1/credit-cards", AuthenticateUser, creditCardRouter);
 app.use("/api/v1/payments", AuthenticateUser, paymentsRouter);
 
+
 app.use(errorHandlerMiddleware);
 
 module.exports = app;

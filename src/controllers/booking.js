@@ -1,7 +1,9 @@
+
 const {NotFoundError, BadRequestError, ConflictError} = require('../errors/errors')
 const Booking = require('../models/booking')
 const Room = require('../models/rooms')
 const {StatusCodes} = require('http-status-codes')
+
 
 const getAllBookings = async (req, res) => {
     try {
@@ -16,6 +18,7 @@ const getAllBookings = async (req, res) => {
 const createBooking = async (req, res) => {
     try {
         req.body.createdBy = req.user.userId
+
 
         const { checkInDate, checkOutDate, guests, currency,
             price, guest_count, guestName, guestEmail, hotelId, roomId } = req.body;
@@ -56,6 +59,7 @@ const createBooking = async (req, res) => {
     } catch (error) {
         message = error.message
         res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ error, message });
+
     }
 
 }
@@ -65,6 +69,7 @@ const createBooking = async (req, res) => {
 const getBookingsByRoom = async (req, res) => {
     try {
         const { roomId } = req.params;
+
         const { user: {userId} } = req;
         
         const booking = await Booking.find({ roomId, createdBy: userId }).populate('roomId');
@@ -74,10 +79,13 @@ const getBookingsByRoom = async (req, res) => {
         }
         
         res.status(StatusCodes.OK).json(booking);
+
+
     } catch (error) {
         res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ message: 'Error fetching bookings', error });
     }
 }
+
 
 
 const updateBooking = async (req, res) => {
@@ -109,3 +117,4 @@ const deleteBookings = async (req, res) => {
 
 
 module.exports =  {getAllBookings, getBookingsByRoom, createBooking, deleteBookings, updateBooking}
+

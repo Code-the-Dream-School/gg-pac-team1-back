@@ -37,22 +37,6 @@ const getAllRooms = async (req, res) => {
     }
 } 
 
-// const get_availabilty = async (req, res) => {
-//     const { date } = req.body
-//     const availableRooms = await Room.find( {
-//         booking: {
-//             $not: {
-//                 $elemMatch: {
-//                     date: new Date(date),
-//                     booked: true,
-//                 }
-//             }
-//         }
-//     })
-
-//     res.send(`Available rooms on ${date}: ${availableRooms.map(room => room.roomNumber).join(', ')}`);
-        
-// }
 
 const getSingleRoomByHotelId = async (req, res) => {
     try {
@@ -79,6 +63,7 @@ const getSingleRoomByHotelId = async (req, res) => {
 }
 
 
+
 // gets all rooms without hotelId
 const getRooms = async (req, res) => {
     const rooms = await Room.find().sort('-createdAt')
@@ -99,3 +84,4 @@ const deleteRoom = async (req, res) => {
 }  
 
 module.exports = {createRoom, getAllRooms, getSingleRoomByHotelId, deleteRoom, getRooms}
+

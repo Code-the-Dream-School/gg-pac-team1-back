@@ -3,7 +3,6 @@ const router = express.Router()
 
 const { createRoom, getAllRooms, getSingleRoomByHotelId, deleteRoom, getRooms } = require('../controllers/room')
 
-
 router.route('/:hotelId').get(getAllRooms).post(createRoom);
 router.route('/:roomId/hotels/:hotelId,').get(getSingleRoomByHotelId);
 router.route('/:id').delete(deleteRoom);
