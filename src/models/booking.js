@@ -6,6 +6,29 @@ const BookingSchema = new mongoose.Schema({
         type: Date, 
         required: [true, 'Please provide the checkInDate'],
     },
+    check_in_time: {
+        type: String,
+        required: true,
+        validate: {
+            validator: function(v) {
+                // Validation for 12-hour format (optional)
+                return /^(0?[1-9]|1[0-2]):[0-5]\d\s?(AM|PM)$/i.test(v);
+            },
+            message: props => `${props.value} is not a valid check-in time! Use "h:mm AM/PM" format.`,
+        }
+    }, 
+    check_out_time: {
+        type: String,
+        required: true,
+        validate: {
+            validator: function(v) {
+                // Validation for 12-hour format (optional)
+                return /^(0?[1-9]|1[0-2]):[0-5]\d\s?(AM|PM)$/i.test(v);
+            },
+            message: props => `${props.value} is not a valid check-in time! Use "h:mm AM/PM" format.`,
+        }
+    }, 
+
     checkOutDate: {
         type: Date, 
         required: [true, 'Please provide the checkOutDate'],
