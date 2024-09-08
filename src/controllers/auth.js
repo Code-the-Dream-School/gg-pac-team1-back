@@ -8,6 +8,7 @@ const {
 const bcrypt = require("bcryptjs"); // npm install bcryptjs ---->>>Used for secure password management.--->>comparePassword
 const crypto = require("crypto"); //token resetpassword
 const nodemailer = require("nodemailer"); //send email
+const user = require("../models/user.js");
 require("dotenv").config(); //load environment variables from  .env
 
 // Configura el transporte de correo
@@ -126,7 +127,8 @@ const resetPassword = async (req, res) => {
     .createHash("sha256")
     .update(req.params.token)
     .digest("hex");
-
+  console.log("Received token:", resetPasswordToken);
+  console.log("Received password:", req.body.password);
   const user = await User.findOne({
     resetPasswordToken,
     resetPasswordExpire: { $gt: Date.now() },
@@ -214,6 +216,41 @@ const updateUser = async (req, res) => {
   }
 };
 
+const changePassword = async (req, res) => {
+  try {
+    const { oldPassword, newPassword } = req.body;
+
+    // que se proporcionen ambos password
+    if (!oldPassword || !newPassword) {
+      return res.status(400).json({ msg: "please, inserted password." });
+    }
+    const user = await User.findById(req.user.userId);
+
+    if (!user) {
+      return res.status(404).json({ msg: "User mot found." });
+    }
+
+    // Verificar  current password
+    const isMatch = await bcrypt.compare(oldPassword, user.password);
+    if (!isMatch) {
+      return res
+        .status(401)
+        .json({ msg: "the current password is not correct." });
+    }
+
+    // Hashear new password
+    const salt = await bcrypt.genSalt(10);
+    user.password = await bcrypt.hash(newPassword, salt);
+
+    await user.save();
+
+    res.status(200).json({ msg: "correct password update." });
+  } catch (error) {
+    res
+      .status(500)
+      .json({ msg: "Error at the update password.", error: error.message });
+  }
+};
 /*test for the router is working*/
 const test1 = async (req, res) => {
   res.send("IT IS A TEST....Auth route is working!");
@@ -228,4 +265,5 @@ module.exports = {
   forgotPassword,
   getUser,
   updateUser,
+  changePassword,
 };
