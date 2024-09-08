@@ -96,10 +96,11 @@ const forgotPassword = async (req, res) => {
   // Genera el token de reset
   const resetToken = user.getResetPasswordToken();
   await user.save();
-
-  const resetUrl = `${req.protocol}://${req.get(
+  const resetUrl = `${process.env.FRONTEND_URL}/reset-password/${resetToken}`; //<--------PARA QUE FUNCIONE EN EL FRONTEND EL URL SEA DEL SERVER 3000 SE SUSTITUYE EL REQ.PROTOCOLO POR LA VARIABLE DE FRONTEND_URL
+  console.log("FRONTEND_URL que estara en el archivo .env", resetUrl);
+  /*const resetUrl = `${req.protocol}://${req.get(
     "host"
-  )}/api/v1/auth/reset-password/${resetToken}`;
+  )}/api/v1/auth/reset-password/${resetToken}`;*/
 
   const message = `You requested a password reset. Please go to this link to reset your password: \n\n ${resetUrl}`;
 
@@ -146,7 +147,7 @@ const resetPassword = async (req, res) => {
 const getUser = async (req, res) => {
   try {
     // Obtener el ID del usuario desde el token JWT
-    const userId = req.user.userId; // Suponiendo que estás usando un middleware para autenticar al usuario y agregar req.user
+    const userId = req.user.userId;
 
     // Buscar al usuario en la base de datos
     const user = await User.findById(userId).select("-password"); // Excluyendo la contraseña del resultado
@@ -161,7 +162,7 @@ const getUser = async (req, res) => {
       email: user.email,
       phone: user.phone,
       address: user.address,
-      creditCards: user.creditCards, // Suponiendo que has agregado un campo para tarjetas de crédito
+      creditCards: user.creditCards,
     });
   } catch (error) {
     console.error("Error getting user:", error);
@@ -172,47 +173,44 @@ const getUser = async (req, res) => {
 };
 
 const updateUser = async (req, res) => {
-  const {
-    body: { name, phone, address, creditCards }, // Nota que ahora es creditCards (arreglo)
-    user: { userId }, // ID del usuario autenticado
-  } = req;
-
-  // Verifica que los campos requeridos no estén vacíos
-  if (!name || !phone || !address) {
-    throw new BadRequestError("Name, phone, and address cannot be empty");
-  }
-
-  // Verifica que la información de las tarjetas de crédito sea válida si está presente
-  if (creditCards && !Array.isArray(creditCards)) {
-    throw new BadRequestError("Credit cards must be an array");
-  }
+  const { name, phone, address, creditCards } = req.body;
+  const userId = req.user.userId;
+  //<-------AQUI------>
+  console.log("Request Body:", req.body);
+  console.log("User Before Update:", user);
 
   try {
-    // Actualiza el usuario en la base de datos
-    const updatedUser = await User.findByIdAndUpdate(
-      userId,
-      { name, phone, address, creditCards }, // Actualiza también creditCards
-      { new: true, runValidators: true } // `new: true` devuelve el documento actualizado
-    );
-
-    // Maneja el caso donde el usuario no es encontrado
-    if (!updatedUser) {
-      throw new NotFoundError(`No user found with id ${userId}`);
+    const user = await User.findById(userId);
+    if (!user) {
+      return res
+        .status(StatusCodes.NOT_FOUND)
+        .json({ message: "User not found" });
     }
 
-    // Envía una respuesta con el usuario actualizado
+    // update inf
+    if (name) user.name = name;
+    if (phone) user.phone = phone;
+    if (address) user.address = address;
+    if (creditCards && Array.isArray(creditCards)) {
+      user.creditCards = creditCards;
+    }
+    await user.save();
+    //data update
     res.status(StatusCodes.OK).json({
+      message: "User information updated successfully",
       user: {
-        name: updatedUser.name,
-        email: updatedUser.email,
-        phone: updatedUser.phone,
-        address: updatedUser.address,
-        creditCards: updatedUser.creditCards, // Asegúrate de que esto esté incluido
+        name: user.name,
+        email: user.email,
+        phone: user.phone,
+        address: user.address,
+        creditCards: user.creditCards,
       },
     });
   } catch (error) {
-    console.error("Update user error:", error);
-    throw new BadRequestError("Error updating user");
+    console.error("Error updating user:", error);
+    res
+      .status(StatusCodes.INTERNAL_SERVER_ERROR)
+      .json({ message: "Error updating user", error: error.message });
   }
 };
 
@@ -222,6 +220,7 @@ const test1 = async (req, res) => {
 };
 
 module.exports = {
+  transporter,
   register,
   login,
   test1,

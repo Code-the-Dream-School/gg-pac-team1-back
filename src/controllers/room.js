@@ -61,6 +61,7 @@ const getSingleRoomByHotelId = async (req, res) => {
 }
 
 
+
 // gets all rooms without hotelId
 const getRooms = async (req, res) => {
     const rooms = await Room.find().sort('-createdAt')
@@ -81,3 +82,4 @@ const deleteRoom = async (req, res) => {
 }  
 
 module.exports = {createRoom, getAllRooms, getSingleRoomByHotelId, deleteRoom, getRooms}
+

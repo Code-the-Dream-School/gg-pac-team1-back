@@ -4,6 +4,7 @@ const mongoose = require('mongoose')
 const BookingSchema = new mongoose.Schema({
     checkInDate: {
         type: Date, 
+
         required: [true, 'Please provide the checkInDate'],
     },
     check_in_time: {
@@ -31,7 +32,8 @@ const BookingSchema = new mongoose.Schema({
 
     checkOutDate: {
         type: Date, 
-        required: [true, 'Please provide the checkOutDate'],
+        required: [true, 'Please provide the date of checking'],
+
     },
     available: {
         type: Boolean,
@@ -80,6 +82,7 @@ const BookingSchema = new mongoose.Schema({
         type: String,
         required: [true, 'Please provide the guest name'],
     },
+
     roomId: {type: mongoose.Schema.Types.ObjectId, 
         ref: 'Room',
         required: [true, 'Please provide the room id'],
@@ -93,6 +96,7 @@ const BookingSchema = new mongoose.Schema({
         ref: 'User',
         required: [true, 'Please provide user'],
     }
+
 },{ timestamps: true }
 )
 

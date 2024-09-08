@@ -1,7 +1,7 @@
 const mongoose = require("mongoose");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
-const crypto = require("crypto"); //para generar token resetpassword
+const crypto = require("crypto"); //para generar token resetpassword, security credit cars
 
 const UserSchema = new mongoose.Schema({
   name: {
@@ -33,7 +33,7 @@ const UserSchema = new mongoose.Schema({
   address: {
     type: String,
   },
-  creditCards: [
+  /* creditCards: [
     {
       number: {
         type: String,
@@ -47,6 +47,16 @@ const UserSchema = new mongoose.Schema({
       cvv: {
         type: String,
         required: true,
+      },
+    },
+  ],*/
+  // En lugar de guardar datos sensibles de tarjeta, se guarda un token de tarjeta
+  paymentMethods: [
+    {
+      stripePaymentMethodId: {
+        type: String,
+        required: true,
+        unique: true,
       },
     },
   ],
