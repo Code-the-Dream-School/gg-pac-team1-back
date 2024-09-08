@@ -4,6 +4,7 @@ const { BadRequestError, NotFoundError } = require("../errors/errors");
 
 const createDestination = async (req, res) => {
   try {
+    console.log("Datos recibidos:", req.body);
     req.body.createdBy = req.user.userId; // Ensure the destination is associated with the user
     const destination = await Destination.create(req.body);
 

@@ -10,6 +10,7 @@ const {
   resetPassword,
   getUser,
   updateUser,
+  changePassword,
 } = require("../controllers/auth");
 
 router.get("/", test1);
@@ -19,4 +20,5 @@ router.get("/user", auth, getUser);
 router.post("/forgot-password", forgotPassword);
 router.patch("/reset-password/:token", resetPassword);
 router.patch("/user", auth, updateUser);
+router.patch("/change-password", auth, changePassword);
 module.exports = router;
