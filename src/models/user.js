@@ -89,6 +89,8 @@ UserSchema.methods.createJWT = function () {
 
 UserSchema.methods.comparePassword = async function (canditatePassword) {
   const isMatch = await bcrypt.compare(canditatePassword, this.password);
+  //console.log(`Comparing passwords: ${canditatePassword} with hash ${this.password}`);
+  //console.log(`Password match: ${isMatch}`);
   return isMatch;
 };
 
