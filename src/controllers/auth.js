@@ -8,7 +8,6 @@ const {
 const bcrypt = require("bcryptjs"); // npm install bcryptjs ---->>>Used for secure password management.--->>comparePassword
 const crypto = require("crypto"); //token resetpassword
 const nodemailer = require("nodemailer"); //send email
-const user = require("../models/user.js");
 require("dotenv").config(); //load environment variables from  .env
 
 // Configura el transporte de correo
@@ -57,8 +56,11 @@ const login = async (req, res) => {
     if (!user) {
       throw new UnauthenticatedError("invalid Credentials");
     }
-
     const isPasswordCorrect = await user.comparePassword(password);
+    /*console.log(`Stored password hash: ${user.password}`);
+    console.log(`Attempted password: ${password}`);
+    console.log(`Password match: ${isPasswordCorrect}`);*/
+
     if (!isPasswordCorrect) {
       throw new UnauthenticatedError("invalid Credentials");
     }
@@ -74,6 +76,7 @@ const login = async (req, res) => {
     ) {
       res.status(error.statusCode).json({ message: error.message });
     } else {
+      console.error(error);
       res
         .status(StatusCodes.INTERNAL_SERVER_ERROR)
         .json({ message: "An unexpected error occurred" });
@@ -127,8 +130,8 @@ const resetPassword = async (req, res) => {
     .createHash("sha256")
     .update(req.params.token)
     .digest("hex");
-  console.log("Received token:", resetPasswordToken);
-  console.log("Received password:", req.body.password);
+  /*console.log("Received token:", resetPasswordToken);
+  console.log("Received password:", req.body.password);*/
   const user = await User.findOne({
     resetPasswordToken,
     resetPasswordExpire: { $gt: Date.now() },
@@ -178,8 +181,8 @@ const updateUser = async (req, res) => {
   const { name, phone, address, creditCards } = req.body;
   const userId = req.user.userId;
   //<-------AQUI------>
-  console.log("Request Body:", req.body);
-  console.log("User Before Update:", user);
+  /*console.log("Request Body:", req.body);
+  console.log("User Before Update:", user);*/
 
   try {
     const user = await User.findById(userId);
@@ -218,31 +221,33 @@ const updateUser = async (req, res) => {
 
 const changePassword = async (req, res) => {
   try {
-    const { oldPassword, newPassword } = req.body;
+    const { oldPassword, newPassword, email } = req.body;
 
     // que se proporcionen ambos password
     if (!oldPassword || !newPassword) {
       return res.status(400).json({ msg: "please, inserted password." });
     }
-    const user = await User.findById(req.user.userId);
+
+    const user = await User.findOne({ email });
 
     if (!user) {
       return res.status(404).json({ msg: "User mot found." });
     }
 
     // Verificar  current password
-    const isMatch = await bcrypt.compare(oldPassword, user.password);
-    if (!isMatch) {
+
+    const isPasswordCorrect = await user.comparePassword(oldPassword);
+
+    if (!isPasswordCorrect) {
       return res
         .status(401)
         .json({ msg: "the current password is not correct." });
     }
 
-    // Hashear new password
-    const salt = await bcrypt.genSalt(10);
-    user.password = await bcrypt.hash(newPassword, salt);
-
+    //there is a pre-save action, which encrypts the password
+    user.password = newPassword;
     await user.save();
+    //console.log("New password hash:", user.password);
 
     res.status(200).json({ msg: "correct password update." });
   } catch (error) {
