@@ -20,7 +20,8 @@ const createBooking = async (req, res) => {
         req.body.createdBy = req.user.userId
 
 
-        const { checkInDate, checkOutDate, guests, currency,
+        const { checkInDate, checkOutDate, check_in_time, check_out_time, guests, currency,
+
             price, guest_count, guestName, guestEmail, hotelId, roomId } = req.body;
         // Find the room
         const room = await Room.findById(roomId).lean()
@@ -47,7 +48,7 @@ const createBooking = async (req, res) => {
         }
 
         const newBooking = await Booking.create({
-            checkInDate, checkOutDate, available: false, booked: true, guests, 
+            checkInDate, checkOutDate, check_in_time, check_out_time, available: false, booked: true, guests, 
             currency,price, guest_count, guestName, 
             guestEmail, hotelId, roomId: room._id, createdBy: req.body.createdBy
         })

@@ -17,3 +17,11 @@ node_modules/
 
 # other
 .DS_Store
+
+.server.js
+
+.db/connect.js
+
+.images
+
+.public/

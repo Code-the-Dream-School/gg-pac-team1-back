@@ -14,7 +14,6 @@ const createRoom = async (req, res) => {
 
         const room = await Room.create({hotelId, roomNumber, bedrooms, floor,
             currency, room_cost_per_night, room_types, bed_type, view, images, createdBy: userId})
-        console.log(room)
 
         // Add room to hotel's rooms array
         await Hotel.findByIdAndUpdate(hotelId, {$push: { rooms: room._id }})
@@ -36,7 +35,6 @@ const getAllRooms = async (req, res) => {
         res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ message: 'Error fetching rooms', error });
     }
 } 
-
 
 const getSingleRoomByHotelId = async (req, res) => {
     try {

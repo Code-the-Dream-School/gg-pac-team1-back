@@ -5,8 +5,13 @@ const {StatusCodes} = require('http-status-codes')
 
 const getAllHotels = async (req, res) => {
     try {
-        const { lat, lng, city, brand, chain, state, street,zipCode, limit = 250 } = req.query;
-        const hotels = await Hotel.find().sort('-createdAt').populate('rooms');
+        const { state, city, limit = 250 } = req.query;
+
+        const query = {};
+        if (state) query.state = state;
+        if (city) query.city = city;
+
+        const hotels = await Hotel.find(query).sort('-createdAt').limit(Number(limit)).populate('rooms');
         res.status(StatusCodes.OK).json({hotels})
     } catch (error) {
         res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ message: 'Error fetching hotels', error })
