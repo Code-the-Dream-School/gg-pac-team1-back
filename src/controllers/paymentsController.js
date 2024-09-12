@@ -9,6 +9,13 @@ const stripe = Stripe(process.env.STRIPE_SECRET_KEY); // just for test no real w
 const createCharge = async (req, res) => {
   const { amount, currency, description, paymentMethodId } = req.body;
   const userId = req.user.userId; // ID user uth
+  console.log("Received request to create charge:", {
+    amount,
+    currency,
+    description,
+    paymentMethodId,
+    userId,
+  });
 
   try {
     const paymentIntent = await stripe.paymentIntents.create({
@@ -36,7 +43,8 @@ const createCharge = async (req, res) => {
       from: process.env.EMAIL_USERNAME,
       to: user.email,
       subject: "Payment Confirmation",
-      text: `Dear ${user.name},\n\nYour payment of ${amount} ${currency} has been successfully processed.\n\nTransaction ID: ${paymentIntent.id}\n\nThank you for your purchase!\n\nBest regards,\nYour Company TravelAmigos`,
+      text: `Dear ${user.name},\n\nYour payment of ${amount} ${currency} 
+      has been successfully processed.\n\nDescription: ${description}\n\nTransaction ID: ${paymentIntent.id}\n\nThank you for your purchase!\n\nBest regards,\nYour Company TravelAmigos`,
     };
 
     await transporter.sendMail(mailOptions);
