@@ -11,6 +11,10 @@ const CreditCardSchema = new mongoose.Schema({
     required: true,
     unique: true,
   },
+  last4: {
+    type: String,
+    required: true, // save last 4 of the card
+  },
 });
 
 module.exports = mongoose.model("CreditCard", CreditCardSchema);
